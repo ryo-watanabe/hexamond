@@ -1,0 +1,64 @@
+html {
+	text-align: center;
+	font-size: 100%;
+	font-family: 'Orbitron', sans-serif;
+	//background-color: #447744;
+	//color: #dddddd;
+	color: #669966;
+}
+h1.title {
+	font-size: 300%;
+	margin-bottom: 10px;
+}
+table {
+        border-collapse: collapse;
+        margin: 0 auto;
+}
+div {
+	align: center;
+	margin: 0 auto;
+}
+div#board {
+	width: 550;
+	height: 550;
+	position: relative;
+}
+div.tri {
+        padding: 0;
+        margin: 0;
+        text-align: center;
+	width: 0px;
+	height: 0px;
+	border-style: solid;
+	position: absolute;
+}
+.tri_up {
+	border-width: 0 25px 43px 25px;
+	border-color: transparent transparent #EEEEEE transparent;
+	transform:rotate(60deg);
+	-ms-transform:rotate(60deg);
+	-webkit-transform:rotate(60deg);
+}
+.tri_dn {
+	border-width: 0 25px 43px 25px;
+	border-color: transparent transparent #BBBBBB transparent;
+}
+div.tri:hover {
+	border-color: transparent transparent #5555EE transparent;
+}
+button, input, select, textarea {
+	font-family: inherit;
+	font-size: 100%;
+	color: inherit;
+}
+button:disabled {
+	color: #aaddaa;
+}
+span.eval {
+	font-size: 100%;
+}
+img {
+	height: 40px;
+	margin: 0;
+	padding: 0;
+}

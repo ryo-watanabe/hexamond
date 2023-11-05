@@ -1,0 +1,35 @@
+<head>
+<link rel="stylesheet" type="text/css" href="style.css">
+<link href="https://fonts.googleapis.com/css?family=Orbitron&display=swap" rel="stylesheet">
+<script type="text/javascript" src="http.js"></script>
+<script type="text/javascript" src="script.js"></script>
+<meta name=”viewport” content=”width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no”>
+</head>
+<body onload="start()">
+	<div id="contents">
+        <h1 class="title">Heptamond</h1>
+        <div><div id="board">
+        </div></div>
+	<h1>
+		<span id=status>Status</span>...<span id=message>Message</span>
+	</h1><h1>
+		<span id=walls>Walls left com:10 player:10</span>
+	</h1><h1>
+		<button id=undobtn onclick="undo()">Undo</button> /
+		<button id=comfirstbtn onclick="comfirst()">Com First</button> /
+		<button id=manualbtn onclick="twoplayer()">2P</button> /
+		Lvl
+		<select id="calc">
+		<option value=100 selected>1</option>
+		<option value=5000>2</option>
+		<option value=100000>3</option>
+		</select>
+	</h1><h1>
+		New Game
+		<button onclick="newgame(5)">5 x 5</button>
+		<button onclick="newgame(7)">7 x 7</button>
+		<button onclick="newgame(9)">9 x 9</button>
+	</h1>
+	<span id=eval class=eval>eval:</span>
+	</div>
+</body>
