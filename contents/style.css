@@ -22,6 +22,12 @@ div#board {
 	width: 550;
 	height: 550;
 	position: relative;
+	display: inline-block;
+}
+table#piece {
+	width: 550;
+	height: 550;
+	display: inline-block;
 }
 div.tri {
         padding: 0;
@@ -32,19 +38,43 @@ div.tri {
 	border-style: solid;
 	position: absolute;
 }
-.tri_up {
-	border-width: 0 25px 43px 25px;
-	border-color: transparent transparent #EEEEEE transparent;
-	transform:rotate(60deg);
-	-ms-transform:rotate(60deg);
-	-webkit-transform:rotate(60deg);
-}
 .tri_dn {
 	border-width: 0 25px 43px 25px;
-	border-color: transparent transparent #BBBBBB transparent;
+	border-color: transparent transparent #D0D0D0 transparent;
 }
-div.tri:hover {
+.tri_up {
+	border-width: 43px 25px 0 25px;
+	border-color: #EEEEEE transparent transparent transparent;
+}
+.disabled{
+    pointer-events: none;
+}
+.tri_dn_p {
+	border-width: 0 15px 26px 15px;
+	border-color: transparent transparent #4444EE transparent;
+}
+.tri_up_p {
+	border-width: 26px 15px 0 15px;
+	border-color: #4444EE transparent transparent transparent;
+}
+.piece_box {
+	width: 140;
+	height: 120;
+	position: relative;
+}
+.selected_box {
+	box-shadow: 10px 5px 5px black;
+}
+/*
+div.tri_dn:hover {
 	border-color: transparent transparent #5555EE transparent;
+}
+div.tri_up:hover {
+	border-color: #5555EE transparent transparent transparent;
+}
+*/
+div.piece_box:hover {
+	background-color: #EEEEEE;
 }
 button, input, select, textarea {
 	font-family: inherit;
