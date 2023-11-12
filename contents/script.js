@@ -53,6 +53,74 @@ var remove_pending = [];
 var stored = [];
 var stored_pieces = [];
 
+function save() {
+	filename = window.prompt("Save file name", "heptamond");
+	if (filename === null) {
+		return;
+	}
+	var data = JSON.stringify({position: ps, mirror: mr, angle: ag, storedpieces: stored_pieces});
+	var a = document.createElement("a");
+	a.download = filename + ".json";
+	a.href = URL.createObjectURL(new Blob([data], {type: "text.plain"}));
+	a.dataset.downloadurl = ["text/plain", a.download, a.href].join(":");
+	a.click();
+}
+
+function init_load() {
+	var file = document.querySelector('#getfile');
+	file.onchange = function () {
+		var fileList = file.files;
+		var reader = new FileReader();
+		reader.readAsText(fileList[0]);
+		reader.onload = function  () {
+			console.log(reader.result);
+			load_board(JSON.parse(reader.result));
+		};
+	};
+}
+
+function load() {
+	document.getElementById("getfile").click();
+}
+
+function load_board(data) {
+	ps = [];
+	ps = data.position.concat();
+	console.log(ps);
+	ag = [];
+	ag = data.angle.concat();
+	mr = [];
+	mr = data.mirror.concat();
+	selected_piece = -1;
+	pending = [];
+	remove_pending = [];
+	stored = [];
+	stored_pieces = [];
+	stored_pieces = data.storedpieces.concat();
+
+	draw_board();
+	draw_pieces();
+
+	for(k = 0; k < stored_pieces.length; k++) {
+		a = stored_pieces[k];
+		coords = piece_coordinates(a, ps[a][0], ps[a][1]);
+		console.log(a);
+		console.log(coords);
+		for(i = 0; i < 7; i++) {
+			pos_x = coords[i][0];
+			pos_y = coords[i][1];
+			tri = document.getElementById("board" + String(pos_x) + ":" + String(pos_y));
+			if ((pos_x + pos_y) % 2 != 0) {
+				tri.style.borderTopColor = cl[a];
+			} else {
+				tri.style.borderBottomColor = cl[a];
+			}
+			stored.push([pos_x, pos_y, a]);
+		}
+		piece_on(a, false);
+	}
+}
+
 function addattr(element) {
 	element.setAttribute("onmouseover", "mouseover(this)");
 	element.setAttribute("onmouseout", "mouseout(this)");
@@ -69,6 +137,7 @@ function start() {
 	manual = false;
 	draw_board();
 	draw_pieces();
+	init_load();
 	//request_quoridor_data({action:"Init", board:{dimension:dim}});
 }
 
@@ -138,6 +207,8 @@ function piece_on(a, on) {
 function draw_pieces() {
 	var table = document.getElementById("piece");
 	var tr;
+
+	while (table.firstChild) table.removeChild(table.firstChild);
 	for (a = 0; a < pc.length; a++) {
 		if (a % 5 == 0) {
 			tr = document.createElement("tr");
@@ -273,7 +344,7 @@ function mouseclick(element) {
 					if ((pos_x + pos_y) % 2 != 0) {
 						tri.style.borderTopColor = "#EEEEEE";
 					} else {
-						tri.style.borderBottomColor = "#D0D0D0";
+						tri.style.borderBottomColor = "#E0E0E0";
 					}
 				}
 			}
