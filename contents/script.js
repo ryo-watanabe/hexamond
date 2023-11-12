@@ -11,10 +11,42 @@ var pc = [
 	[[0, 0, 0], [1, 0, 0], [1, 1, 0], [1, 1, 1], [2, 0, 0], [2, 1, 0], [2, 2, 0]], // A
 	[[0, 0, 0], [1, 0, 0], [1, 2, 0], [1, 2, 2], [3, 0, 0], [3, 2, 0], [3, 2, 2]], // B
 	[[0, 0, 0], [2, 0, 0], [2, 1, 0], [2, 1, 1], [3, 0, 0], [3, 2, 0], [3, 2, 2]], // C
+	[[0, 0, 0], [2, 0, 0], [2, 1, 0], [2, 1, 2], [3, 0, 0], [3, 2, 0], [3, 2, 2]], // D
+	[[0, 0, 0], [2, 0, 0], [2, 2, 0], [2, 2, 1], [3, 0, 0], [3, 2, 0], [3, 2, 2]], // E
+	[[0, 0, 0], [2, 0, 0], [2, 1, 0], [2, 1, 2], [3, 0, 0], [3, 2, 0], [3, 2, 1]], // F
+	[[0, 0, 0], [2, 0, 0], [2, 1, 0], [2, 1, 2], [3, 0, 0], [1, 0, 0], [1, 1, 0]], // G
+	[[0, 0, 0], [1, 0, 0], [1, 2, 0], [1, 2, 1], [3, 0, 0], [3, 2, 0], [3, 2, 2]], // H
+	[[0, 0, 0], [1, 0, 0], [1, 2, 0], [2, 0, 0], [2, 2, 0], [2, 2, 1], [3, 0, 0]], // I
+	[[0, 0, 0], [1, 0, 0], [1, 1, 0], [1, 1, 2], [3, 0, 0], [3, 2, 0], [3, 2, 1]], // J
+	[[0, 0, 0], [1, 0, 0], [1, 1, 0], [1, 2, 0], [3, 0, 0], [3, 2, 0], [3, 1, 0]], // K
+	[[0, 0, 0], [1, 0, 0], [2, 0, 0], [2, 2, 0], [3, 0, 0], [3, 2, 0], [3, 1, 0]], // L
+	[[0, 0, 0], [1, 0, 0], [1, 2, 0], [2, 0, 0], [2, 1, 0], [2, 1, 2], [3, 0, 0]], // M
+	[[0, 0, 0], [1, 0, 0], [2, 0, 0], [2, 2, 0], [2, 2, 2], [3, 0, 0], [3, 1, 0]], // N
+	[[0, 0, 0], [1, 0, 0], [1, 2, 0], [2, 0, 0], [2, 2, 0], [3, 0, 0], [3, 2, 0]], // O
+	[[0, 0, 0], [1, 0, 0], [1, 2, 0], [2, 0, 0], [2, 2, 0], [3, 0, 0], [3, 1, 0]], // P
+	[[0, 0, 0], [1, 0, 0], [1, 1, 0], [1, 1, 2], [2, 0, 0], [2, 1, 0], [2, 1, 2]], // Q
+	[[0, 0, 0], [1, 0, 0], [1, 1, 0], [1, 2, 0], [2, 0, 0], [2, 2, 0], [2, 2, 1]], // R
+	[[0, 0, 0], [1, 0, 0], [1, 2, 0], [1, 2, 2], [2, 0, 0], [3, 0, 0], [3, 2, 0]], // S
+	[[0, 0, 0], [1, 0, 0], [1, 1, 0], [2, 0, 0], [2, 1, 0], [2, 1, 1], [3, 0, 0]], // T
+	[[0, 0, 0], [1, 0, 0], [1, 1, 0], [1, 1, 2], [3, 0, 0], [3, 1, 0], [3, 2, 0]], // U
+	[[0, 0, 0], [1, 0, 0], [1, 2, 0], [2, 0, 0], [2, 2, 0], [3, 0, 0], [1, 1, 0]], // V
+	[[0, 0, 0], [1, 0, 0], [2, 0, 0], [2, 1, 0], [2, 1, 1], [3, 0, 0], [3, 2, 0]], // W
+	[[0, 0, 0], [1, 0, 0], [2, 0, 0], [2, 1, 0], [3, 0, 0], [3, 2, 0], [3, 2, 1]], // X
 ];
-var cl  = [ "#55AAFF", "#AAFF55", "#FF55AA" ];
-var ag = [1, 1, 1];
-var ps = [[-1, -1], [-1, -1], [-1, -1]];
+var cl  = [
+	"#008b8b", "#ff6347", "#778899", "#228b22", "#d2b48c", "#8fbc8f", "#da70d6",
+	"#ff8c00", "#6b8e23", "#808080", "#daa520", "#1e90ff", "#b8860b", "#00ced1",
+	"#bdb76b", "#fa8072", "#ee82ee", "#5f9ea0", "#cd5c5c", "#dc143c", "#00fa9a",
+	"#ffd700", "#7b68ee", "#3cb371"
+];
+var offset = [
+	[[-1, 0], [-1, 0], [0, 1], [1, 0], [1, 0], [0, -1]],
+	[[1, 0], [0, -1], [-1, 0], [-1, 0], [0, 1], [1, 0]],
+	[[0, 1], [1, 0], [1, 0], [0, -1], [-1, 0], [-1, 0]],
+];
+var ag = Array(24).fill(1);
+var mr = Array(24).fill(1);
+var ps = Array(24).fill([-1, -1]);
 var selected_piece = 0;
 var pending = [];
 var remove_pending = [];
@@ -52,55 +84,12 @@ function piece_coordinates(a, x, y) {
 			} else if (angle > 5) {
 				angle = angle - 6;
 			}
-			if (angle == 0) {
-				if (pc[a][i][j] == 1) {
-					pos_x = pos_x - 1;
-				} else if (pc[a][i][j] == 2) {
-					pos_x = pos_x + 1;
-				} else if (pc[a][i][j] == 3) {
-					pos_y = pos_y + 1;
-				}
-			} else if (angle == 1) {
-				if (pc[a][i][j] == 1) {
-					pos_x = pos_x - 1;
-				} else if (pc[a][i][j] == 2) {
-					pos_y = pos_y - 1;
-				} else if (pc[a][i][j] == 3) {
-					pos_x = pos_x + 1;
-				}
-			} else if (angle == 2) {
-				if (pc[a][i][j] == 1) {
-					pos_y = pos_y + 1;
-				} else if (pc[a][i][j] == 2) {
-					pos_x = pos_x - 1;
-				} else if (pc[a][i][j] == 3) {
-					pos_x = pos_x + 1;
-				}
-			} else if (angle == 3) {
-				if (pc[a][i][j] == 1) {
-					pos_x = pos_x + 1;
-				} else if (pc[a][i][j] == 2) {
-					pos_x = pos_x - 1;
-				} else if (pc[a][i][j] == 3) {
-					pos_y = pos_y - 1;
-				}
-			} else if (angle == 4) {
-				if (pc[a][i][j] == 1) {
-					pos_x = pos_x + 1;
-				} else if (pc[a][i][j] == 2) {
-					pos_y = pos_y + 1;
-				} else if (pc[a][i][j] == 3) {
-					pos_x = pos_x - 1;
-				}
-			} else if (angle == 5) {
-				if (pc[a][i][j] == 1) {
-					pos_y = pos_y - 1;
-				} else if (pc[a][i][j] == 2) {
-					pos_x = pos_x + 1;
-				} else if (pc[a][i][j] == 3) {
-					pos_x = pos_x - 1;
-				}
+			// position offset
+			if (pc[a][i][j] == 0) {
+				break;
 			}
+			pos_x = pos_x + mr[a] * offset[pc[a][i][j] - 1][angle][0];
+			pos_y = pos_y + offset[pc[a][i][j] - 1][angle][1];
 			// angle
 			if (pc[a][i][j] == 1) {
 				angle = angle + 1;
@@ -125,8 +114,8 @@ function draw_piece(box, a, on) {
 		pos_x = coords[i][0];
 		pos_y = coords[i][1];
 		var tri = document.createElement("div");
-		tri.style.top = pos_y * 26;
-		tri.style.left = pos_x * 15;
+		tri.style.top = pos_y * 19;
+		tri.style.left = pos_x * 11;
 		if ((pos_x + pos_y) % 2 == 0) {
 			tri.className = "tri tri_up_p";
 			tri.style.borderTopColor = cl[a] + alpha;
@@ -148,9 +137,11 @@ function piece_on(a, on) {
 
 function draw_pieces() {
 	var table = document.getElementById("piece");
-	var tr = document.createElement("tr");
-	for (a = 0; a < 3; a++) {
-
+	var tr;
+	for (a = 0; a < pc.length; a++) {
+		if (a % 5 == 0) {
+			tr = document.createElement("tr");
+		}
 		var box = document.createElement("div");
 		box.className = "piece_box";
 		if (a == selected_piece) {
@@ -162,8 +153,13 @@ function draw_pieces() {
 		box.setAttribute("onclick", "mouseclick(this)");
 		td.appendChild(box);
 		tr.appendChild(td);
+		if (a % 5 == 4) {
+			table.appendChild(tr);
+		}
 	}
-	table.appendChild(tr);
+	if (pc.length % 5 != 0) {
+		table.appendChild(tr);
+	}
 }
 
 function draw_board() {
@@ -205,7 +201,7 @@ function dump_stored_pieces() {
 
 function mouseclick(element) {
 	if (element.id.startsWith("piece")) {
-		index = parseInt(element.id.substr(5, 1));
+		index = parseInt(element.id.substr(5));
 		if (index != selected_piece) {
 			//dump_stored_pieces();
 			for(i = 0; i < stored_pieces.length; i++) {
@@ -224,6 +220,7 @@ function mouseclick(element) {
 			ag[index] = ag[index] + 1;
 			if (ag[index] == 6) {
 				ag[index] = 0;
+				mr[index] = mr[index] * -1;
 			}
 			box = document.getElementById(element.id);
 			while (box.firstChild) box.removeChild(box.firstChild);
@@ -326,7 +323,7 @@ function clear_pending() {
 		if ((pos_x + pos_y) % 2 != 0) {
 			tri.style.borderTopColor = "#EEEEEE";
 		} else {
-			tri.style.borderBottomColor = "#D0D0D0";
+			tri.style.borderBottomColor = "#E0E0E0";
 		}
 	}
 	pending = [];

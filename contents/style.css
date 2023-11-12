@@ -40,7 +40,7 @@ div.tri {
 }
 .tri_dn {
 	border-width: 0 25px 43px 25px;
-	border-color: transparent transparent #D0D0D0 transparent;
+	border-color: transparent transparent #E0E0E0 transparent;
 }
 .tri_up {
 	border-width: 43px 25px 0 25px;
@@ -50,16 +50,17 @@ div.tri {
     pointer-events: none;
 }
 .tri_dn_p {
-	border-width: 0 15px 26px 15px;
+	border-width: 0 11px 19px 11px;
 	border-color: transparent transparent #4444EE transparent;
 }
 .tri_up_p {
-	border-width: 26px 15px 0 15px;
+	border-width: 19px 11px 0 11px;
 	border-color: #4444EE transparent transparent transparent;
 }
 .piece_box {
-	width: 140;
-	height: 120;
+	width: 100;
+	height: 95;
+	margin-top: 10;
 	position: relative;
 }
 .selected_box {
