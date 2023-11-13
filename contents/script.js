@@ -52,9 +52,31 @@ var pending = [];
 var remove_pending = [];
 var stored = [];
 var stored_pieces = [];
+var undo_data = [];
+
+function undo() {
+	if (undo_data.length == 1) {
+		return;
+	}
+	undo_data.pop();
+	if (undo_data.length > 0) {
+		load_board(undo_data[undo_data.length - 1]);
+	}
+	console.log(undo_data.length);
+}
+
+function undo_push() {
+	undo_data.push({
+		position: ps.concat(),
+		mirror: mr.concat(),
+		angle: ag.concat(),
+		storedpieces: stored_pieces.concat()
+	});
+	console.log(undo_data.length);
+}
 
 function save() {
-	filename = window.prompt("Save file name", "heptamond");
+	var filename = window.prompt("Save file name", "heptamond");
 	if (filename === null) {
 		return;
 	}
@@ -84,9 +106,9 @@ function load() {
 }
 
 function load_board(data) {
+	console.log(data);
 	ps = [];
 	ps = data.position.concat();
-	console.log(ps);
 	ag = [];
 	ag = data.angle.concat();
 	mr = [];
@@ -101,15 +123,13 @@ function load_board(data) {
 	draw_board();
 	draw_pieces();
 
-	for(k = 0; k < stored_pieces.length; k++) {
-		a = stored_pieces[k];
-		coords = piece_coordinates(a, ps[a][0], ps[a][1]);
-		console.log(a);
-		console.log(coords);
-		for(i = 0; i < 7; i++) {
-			pos_x = coords[i][0];
-			pos_y = coords[i][1];
-			tri = document.getElementById("board" + String(pos_x) + ":" + String(pos_y));
+	for(var k = 0; k < stored_pieces.length; k++) {
+		var a = stored_pieces[k];
+		var coords = piece_coordinates(a, ps[a][0], ps[a][1]);
+		for(var i = 0; i < 7; i++) {
+			var pos_x = coords[i][0];
+			var pos_y = coords[i][1];
+			var tri = document.getElementById("board" + String(pos_x) + ":" + String(pos_y));
 			if ((pos_x + pos_y) % 2 != 0) {
 				tri.style.borderTopColor = cl[a];
 			} else {
@@ -132,22 +152,28 @@ function newgame(dimension) {
 	start();
 }
 
+var el_board, el_piece;
+
 function start() {
 	gameinit = true;
 	manual = false;
 	draw_board();
 	draw_pieces();
 	init_load();
-	//request_quoridor_data({action:"Init", board:{dimension:dim}});
+	undo_push();
+	el_board = document.querySelector("div#board");
+	el_board.onwheel = wheel;
+	el_piece = document.querySelector("table#piece");
+	el_piece.onwheel = wheel;
 }
 
 function piece_coordinates(a, x, y) {
 	var coords = [];
-	for (i = 0; i < 7; i++) {
-		pos_x = x;
-		pos_y = y;
-		angle = ag[a];
-		for (j = 0; j < 3; j++) {
+	for (var i = 0; i < 7; i++) {
+		var pos_x = x;
+		var pos_y = y;
+		var angle = ag[a];
+		for (var j = 0; j < 3; j++) {
 			if (angle < 0) {
 				angle = angle + 6;
 			} else if (angle > 5) {
@@ -174,14 +200,14 @@ function piece_coordinates(a, x, y) {
 }
 
 function draw_piece(box, a, on) {
-	alpha = "";
+	var alpha = "";
 	if (!on) {
 		alpha = "11";
 	}
-	coords = piece_coordinates(a, 4 - ((ag[a] + 1) % 2), 2);
-	for (i = 0; i < 7; i++) {
-		pos_x = coords[i][0];
-		pos_y = coords[i][1];
+	var coords = piece_coordinates(a, 4 - ((ag[a] + 1) % 2), 2);
+	for (var i = 0; i < 7; i++) {
+		var pos_x = coords[i][0];
+		var pos_y = coords[i][1];
 		var tri = document.createElement("div");
 		tri.style.top = pos_y * 19;
 		tri.style.left = pos_x * 11;
@@ -200,16 +226,32 @@ function draw_piece(box, a, on) {
 
 function piece_on(a, on) {
 	var box = document.getElementById("piece" + String(a));
-	while (box.firstChild) box.removeChild(box.firstChild);
+	//while (box.firstChild) box.removeChild(box.firstChild);
+	clearInner(box);
 	draw_piece(box, a, on);
+}
+
+function clearInner(node) {
+  while (node.hasChildNodes()) {
+    clear(node.firstChild);
+  }
+}
+
+function clear(node) {
+  while (node.hasChildNodes()) {
+    clear(node.firstChild);
+  }
+  node.parentNode.removeChild(node);
+  //console.log(node, "cleared!");
 }
 
 function draw_pieces() {
 	var table = document.getElementById("piece");
 	var tr;
 
-	while (table.firstChild) table.removeChild(table.firstChild);
-	for (a = 0; a < pc.length; a++) {
+	//while (table.firstChild) table.removeChild(table.firstChild);
+	clearInner(table);
+	for (var a = 0; a < pc.length; a++) {
 		if (a % 5 == 0) {
 			tr = document.createElement("tr");
 		}
@@ -236,10 +278,11 @@ function draw_pieces() {
 function draw_board() {
 	var div = document.getElementById("board");
 	// clear game board
-	while (div.firstChild) div.removeChild(div.firstChild);
+	//while (div.firstChild) div.removeChild(div.firstChild);
+	clearInner(div);
 
-	for (i = 0; i < 20; i++) {
-		for (j = 0; j < 12; j++) {
+	for (var i = 0; i < 20; i++) {
+		for (var j = 0; j < 12; j++) {
 
 			// mask
 			if (i <= boardmaskfrom[j] || i > boardmaskto[j]) {
@@ -263,8 +306,8 @@ function draw_board() {
 }
 
 function dump_stored_pieces() {
-	dump = "";
-	for(i = 0; i < stored_pieces.length; i++) {
+	var dump = "";
+	for(var i = 0; i < stored_pieces.length; i++) {
 		dump += " " + String(stored_pieces[i]);
 	}
 	alert("stored_pieces:" + dump);
@@ -272,20 +315,20 @@ function dump_stored_pieces() {
 
 function mouseclick(element) {
 	if (element.id.startsWith("piece")) {
-		index = parseInt(element.id.substr(5));
+		var index = parseInt(element.id.substr(5));
 		if (index != selected_piece) {
 			//dump_stored_pieces();
-			for(i = 0; i < stored_pieces.length; i++) {
+			for(var i = 0; i < stored_pieces.length; i++) {
 				if (index == stored_pieces[i]) {
 					return;
 				}
 			}
 			if (selected_piece >= 0) {
-				prev = document.getElementById("piece" + String(selected_piece));
+				var prev = document.getElementById("piece" + String(selected_piece));
 				prev.className = "piece_box";
 			}
 			selected_piece = index;
-			curr = document.getElementById(element.id);
+			var curr = document.getElementById(element.id);
 			curr.className = "piece_box selected_box";
 		} else {
 			ag[index] = ag[index] + 1;
@@ -293,40 +336,59 @@ function mouseclick(element) {
 				ag[index] = 0;
 				mr[index] = mr[index] * -1;
 			}
-			box = document.getElementById(element.id);
-			while (box.firstChild) box.removeChild(box.firstChild);
+			var box = document.getElementById(element.id);
+			//while (box.firstChild) box.removeChild(box.firstChild);
+			clearInner(box);
 			draw_piece(box, index, true);
 		}
 	}
 	if (element.id.startsWith("board")) {
-		indeces = element.id.substr(5).split(":");
-		x = parseInt(indeces[0]);
-		y = parseInt(indeces[1]);
+		var indeces = element.id.substr(5).split(":");
+		var x = parseInt(indeces[0]);
+		var y = parseInt(indeces[1]);
 
 		// store a piece
-		on_pending = false;
-		for(i = 0; i < pending.length; i++) {
+		var on_pending = false;
+		for(var i = 0; i < pending.length; i++) {
 			if (x == pending[i][0] && y == pending[i][1]) {
 				on_pending = true;
 				break;
 			}
 		}
 		if (on_pending) {
-			for(i = 0; i < pending.length; i++) {
+			for(var i = 0; i < pending.length; i++) {
 				stored.push([pending[i][0], pending[i][1], selected_piece]);
 			}
 			pending = [];
 			stored_pieces.push(selected_piece);
 			piece_on(selected_piece, false);
-			prev = document.getElementById("piece" + String(selected_piece));
+			var prev = document.getElementById("piece" + String(selected_piece));
 			prev.className = "piece_box";
-			selected_piece = -1;
+			var not_stored = -1;
+			for (l = 0; l < 24; l++) {
+				var m = 0;
+				for ( ; m < stored_pieces.length; m++) {
+					if (l == stored_pieces[m]) {
+						break;
+					}
+				}
+				if (m == stored_pieces.length) {
+					not_stored = l;
+					break;
+				}
+			}
+			selected_piece = not_stored;
+			if (selected_piece >= 0) {
+				var curr = document.getElementById("piece" + String(selected_piece));
+				curr.className = "piece_box selected_box";
+			}
+			undo_push();
 			return;
 		}
 
 		// remove a piece
-		at = -1;
-		for(i = 0; i < stored.length; i++) {
+		var at = -1;
+		for(var i = 0; i < stored.length; i++) {
 			if (x == stored[i][0] && y == stored[i][1]) {
 				at = i;
 				break;
@@ -336,11 +398,11 @@ function mouseclick(element) {
 			remove = stored[at][2];
 
 			// erase piece on board
-			for(i = 0; i < stored.length; i++) {
+			for(var i = 0; i < stored.length; i++) {
 				if (stored[i][2] == remove) {
-					pos_x = stored[i][0];
-					pos_y = stored[i][1];
-					tri = document.getElementById("board" + String(pos_x) + ":" + String(pos_y));
+					var pos_x = stored[i][0];
+					var pos_y = stored[i][1];
+					var tri = document.getElementById("board" + String(pos_x) + ":" + String(pos_y));
 					if ((pos_x + pos_y) % 2 != 0) {
 						tri.style.borderTopColor = "#EEEEEE";
 					} else {
@@ -352,8 +414,8 @@ function mouseclick(element) {
 			piece_on(remove, true);
 
 			// remake stored
-			new_stored = [];
-			for(i = 0; i < stored.length; i++) {
+			var new_stored = [];
+			for(var i = 0; i < stored.length; i++) {
 				if (stored[i][2] != remove) {
 					new_stored.push(stored[i]);
 				}
@@ -361,8 +423,8 @@ function mouseclick(element) {
 			stored = new_stored;
 
 			// remake stored_pieces
-			new_stored_pieces = [];
-			for(i = 0; i < stored_pieces.length; i++) {
+			var new_stored_pieces = [];
+			for(var i = 0; i < stored_pieces.length; i++) {
 				if (stored_pieces[i] != remove) {
 					new_stored_pieces.push(stored_pieces[i]);
 				}
@@ -372,25 +434,27 @@ function mouseclick(element) {
 
 			// set selected piece
 			if (selected_piece >= 0) {
-				prev = document.getElementById("piece" + String(selected_piece));
+				var prev = document.getElementById("piece" + String(selected_piece));
 				prev.className = "piece_box";
 			}
 			selected_piece = remove;
-			curr = document.getElementById("piece" + String(selected_piece));
+			var curr = document.getElementById("piece" + String(selected_piece));
 			curr.className = "piece_box selected_box";
+
+			undo_push();
 		}
 	}
 }
 
 function clear_pending() {
-	for(i = 0; i < pending.length; i++) {
-		pos_x = pending[i][0];
-		pos_y = pending[i][1];
+	for(var i = 0; i < pending.length; i++) {
+		var pos_x = pending[i][0];
+		var pos_y = pending[i][1];
 		// mask
 		if (pos_x <= boardmaskfrom[pos_y] || pos_x > boardmaskto[pos_y]) {
 			continue;
 		}
-		tri = document.getElementById("board" + String(pos_x) + ":" + String(pos_y));
+		var tri = document.getElementById("board" + String(pos_x) + ":" + String(pos_y));
 		if ((pos_x + pos_y) % 2 != 0) {
 			tri.style.borderTopColor = "#EEEEEE";
 		} else {
@@ -401,10 +465,10 @@ function clear_pending() {
 }
 
 function clear_remove_pending() {
-	for(i = 0; i < remove_pending.length; i++) {
-		pos_x = remove_pending[i][0];
-		pos_y = remove_pending[i][1];
-		tri = document.getElementById("board" + String(pos_x) + ":" + String(pos_y));
+	for(var i = 0; i < remove_pending.length; i++) {
+		var pos_x = remove_pending[i][0];
+		var pos_y = remove_pending[i][1];
+		var tri = document.getElementById("board" + String(pos_x) + ":" + String(pos_y));
 		if ((pos_x + pos_y) % 2 != 0) {
 			tri.style.borderTopColor = cl[remove_pending[i][2]];
 		} else {
@@ -414,16 +478,57 @@ function clear_remove_pending() {
 	remove_pending = [];
 }
 
+function draw_pending_piece(x, y) {
+	clear_remove_pending();
+	if (selected_piece < 0) {
+		return false;
+	}
+	if ((x + y) % 2 != ag[selected_piece] % 2) {
+		return false;
+	}
+	var coords = piece_coordinates(selected_piece, x, y);
+	for(var i = 0; i < 7; i++) {
+		var pos_x = coords[i][0];
+		var pos_y = coords[i][1];
+		// mask
+		if (pos_y < 0 || pos_y > 11) {
+			return false;
+		}
+		if (pos_x <= boardmaskfrom[pos_y] || pos_x > boardmaskto[pos_y]) {
+			return false;
+		}
+		// stored
+		for(var j = 0; j < stored.length; j++) {
+			if (pos_x == stored[j][0] && pos_y == stored[j][1]) {
+				return false;
+			}
+		}
+	}
+	clear_pending();
+	for(var i = 0; i < 7; i++) {
+		var pos_x = coords[i][0];
+		var pos_y = coords[i][1];
+		var tri = document.getElementById("board" + String(pos_x) + ":" + String(pos_y));
+		if ((pos_x + pos_y) % 2 != 0) {
+			tri.style.borderTopColor = cl[selected_piece];
+		} else {
+			tri.style.borderBottomColor = cl[selected_piece];
+		}
+		pending.push([pos_x, pos_y]);
+	}
+	return true;
+}
+
 function mouseover(element) {
 	if (element.id.startsWith("board")) {
-		indeces = element.id.substr(5).split(":");
-		x = parseInt(indeces[0]);
-		y = parseInt(indeces[1]);
+		var indeces = element.id.substr(5).split(":");
+		var x = parseInt(indeces[0]);
+		var y = parseInt(indeces[1]);
 
 		// remove piece pending
 		clear_remove_pending();
-		at = -1;
-		for(i = 0; i < stored.length; i++) {
+		var at = -1;
+		for(var i = 0; i < stored.length; i++) {
 			if (x == stored[i][0] && y == stored[i][1]) {
 				at = i;
 				break;
@@ -431,13 +536,13 @@ function mouseover(element) {
 		}
 		if (at >= 0) {
 			clear_pending();
-			remove = stored[at][2];
+			var remove = stored[at][2];
 			// erase piece on board
-			for(i = 0; i < stored.length; i++) {
+			for(var i = 0; i < stored.length; i++) {
 				if (stored[i][2] == remove) {
-					pos_x = stored[i][0];
-					pos_y = stored[i][1];
-					tri = document.getElementById("board" + String(pos_x) + ":" + String(pos_y));
+					var pos_x = stored[i][0];
+					var pos_y = stored[i][1];
+					var tri = document.getElementById("board" + String(pos_x) + ":" + String(pos_y));
 					if ((pos_x + pos_y) % 2 != 0) {
 						tri.style.borderTopColor = cl[remove] + "CC";
 					} else {
@@ -449,44 +554,38 @@ function mouseover(element) {
 			return;
 		}
 
-		// new piece pending
-		if (selected_piece < 0 || (x + y) % 2 != ag[selected_piece] % 2) {
-			return;
+		// new pending piece
+		if (draw_pending_piece(x, y)) {
+			ps[selected_piece] = [x, y];
 		}
-		coords = piece_coordinates(selected_piece, x, y);
-		for(i = 0; i < 7; i++) {
-			pos_x = coords[i][0];
-			pos_y = coords[i][1];
-			// mask
-			if (pos_y < 0 || pos_y > 11) {
-				return;
-			}
-			if (pos_x <= boardmaskfrom[pos_y] || pos_x > boardmaskto[pos_y]) {
-				return;
-			}
-			// stored
-			for(j = 0; j < stored.length; j++) {
-				if (pos_x == stored[j][0] && pos_y == stored[j][1]) {
-					return;
-				}
-			}
-		}
-		clear_pending();
-		clear_remove_pending();
-		for(i = 0; i < 7; i++) {
-			pos_x = coords[i][0];
-			pos_y = coords[i][1];
-			tri = document.getElementById("board" + String(pos_x) + ":" + String(pos_y));
-			if ((pos_x + pos_y) % 2 != 0) {
-				tri.style.borderTopColor = cl[selected_piece];
-			} else {
-				tri.style.borderBottomColor = cl[selected_piece];
-			}
-			pending.push([pos_x, pos_y]);
-		}
-		ps[selected_piece] = [x, y];
 	}
 }
 
 function mouseout(element) {
+}
+
+function wheel(event) {
+	event.preventDefault();
+	//console.log(event.deltaY);
+	if (selected_piece >= 0) {
+		if (event.deltaY > 0) {
+			ag[selected_piece] = ag[selected_piece] + 1;
+		} else {
+			ag[selected_piece] = ag[selected_piece] - 1;
+		}
+		if (ag[selected_piece] == 6) {
+			ag[selected_piece] = 0;
+			mr[selected_piece] = mr[selected_piece] * -1;
+		}
+		if (ag[selected_piece] == -1) {
+			ag[selected_piece] = 5;
+			mr[selected_piece] = mr[selected_piece] * -1;
+		}
+		var box = document.getElementById("piece" + String(selected_piece));
+		//while (box.firstChild) box.removeChild(box.firstChild);
+		clearInner(box);
+		draw_piece(box, selected_piece, true);
+		// draw piece on the board
+		draw_pending_piece(ps[selected_piece][0], ps[selected_piece][1]);
+	}
 }
